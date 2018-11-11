@@ -1,0 +1,77 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Sun Nov 11 21:10:26 2018",
+    "version": "eosio::abi/1.1",
+    "structs": [
+        {
+            "name": "deloffer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "newoffer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "payout",
+                    "type": "name"
+                },
+                {
+                    "name": "price",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "offer",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "payout",
+                    "type": "name"
+                },
+                {
+                    "name": "price",
+                    "type": "uint64"
+                }
+            ]
+        }
+    ],
+    "types": [],
+    "actions": [
+        {
+            "name": "deloffer",
+            "type": "deloffer",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newoffer",
+            "type": "newoffer",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "offer",
+            "type": "offer",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": [],
+    "abi_extensions": []
+}
