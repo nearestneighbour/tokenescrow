@@ -10,3 +10,6 @@ Tutorial/example smart contract that acts as an escrow account for trading EOS a
 * Implement takeoffer()
   * price: use asset type instead of uint64_t
   * use eosio.token::transfer() inline or via apply()
+* Write tutorial
+  * Sam the Seller sells account to Bob the Buyer
+  * samselleracc, sampayoutacc, bobsbuyeracc
