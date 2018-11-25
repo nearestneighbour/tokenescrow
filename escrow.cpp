@@ -12,6 +12,13 @@ void escrow::deloffer(uint64_t offerid) {
     eosio_assert(it != offers.end(), "Offer not found");
     // You can only delete your own offers
     require_auth(it->account);
+    // Return funds to account
+    action(
+        permission_level(get_self(), "active"_n),
+        it->offer.contract,
+        "transfer"_n,
+        tx{get_self(), it->account, it->offer.quantity, memo.c_str()}
+    ).send();
     // Remove offer from table
     offers.erase(it);
 }
@@ -46,8 +53,16 @@ void escrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
     msg = "Wrong amount, try " + it->price.quantity.to_string();
     msg += " instead of " + quantity.to_string();
     eosio_assert(quantity == it->price.quantity, msg.c_str());
-    // Send offer assets
+
     string memo = "Payout offer ID " + std::to_string(offerid);
+    // Send price assets to offer-creator
+    action(
+        permission_level(get_self(), "active"_n),
+        it->price.contract,
+        "transfer"_n,
+        tx{get_self(), it->account, it->price.quantity, memo.c_str()}
+    ).send();
+    // Send offer assets to offer-taker
     action(
         permission_level(get_self(), "active"_n),
         it->offer.contract,
