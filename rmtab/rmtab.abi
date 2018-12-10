@@ -1,17 +1,7 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Nov 27 00:59:16 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Nov 27 00:36:07 2018",
     "version": "eosio::abi/1.1",
     "structs": [
-        {
-            "name": "deloffer",
-            "base": "",
-            "fields": [
-                {
-                    "name": "offerid",
-                    "type": "uint64"
-                }
-            ]
-        },
         {
             "name": "offer_info",
             "base": "",
@@ -36,16 +26,10 @@
         }
     ],
     "types": [],
-    "actions": [
-        {
-            "name": "deloffer",
-            "type": "deloffer",
-            "ricardian_contract": ""
-        }
-    ],
+    "actions": [],
     "tables": [
         {
-            "name": "offers",
+            "name": "offer",
             "type": "offer_info",
             "index_type": "i64",
             "key_names": [],

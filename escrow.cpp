@@ -13,6 +13,7 @@ void escrow::deloffer(uint64_t offerid) {
     // You can only delete your own offers
     require_auth(it->account);
     // Return funds to account
+    string memo = "Refunding of deleted offer " + std::to_string(offerid);
     action(
         permission_level(get_self(), "active"_n),
         it->offer.contract,
@@ -44,9 +45,12 @@ void escrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
     auto it = offers.find(offerid);
     eosio_assert(it != offers.end(), "Offer not found");
     // Check price assets
-    string msg = "Wrong symbol, try " + std::to_string(it->price.quantity.symbol.raw());
-    msg += " instead of " + std::to_string(quantity.symbol.raw());
-    eosio_assert(quantity.symbol == it->price.quantity.symbol, msg.c_str());
+    string msg = "Wrong symbol, try " + it->price.quantity.to_string();
+    msg += " instead of " + quantity.to_string();
+    eosio_assert(
+        (quantity.symbol == it->price.quantity.symbol && quantity.amount == it->price.quantity.amount),
+        msg.c_str()
+    );
     msg = "Wrong contract, try " + it->price.contract.to_string();
     msg += " instead of " + get_code().to_string();
     eosio_assert(get_code() == it->price.contract, msg.c_str());
