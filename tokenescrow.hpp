@@ -2,9 +2,9 @@
 #include <eosiolib/asset.hpp>
 using namespace eosio;
 
-class [[eosio::contract]] escrow : public contract {
+class [[eosio::contract]] tokenescrow : public contract {
 public:
-    escrow(name receiver, name code, datastream<const char*> ds):
+    tokenescrow(name receiver, name code, datastream<const char*> ds):
         contract(receiver, code, ds), offers(receiver, receiver.value) {}
 
     [[eosio::action]] void deloffer(uint64_t offerid);
@@ -25,7 +25,7 @@ private:
         extended_asset price;
         uint64_t primary_key() const {return offerid;}
         //uint64_t sec_key() const {return account.value;}
-        //EOSLIB_SERIALIZE(offer_info, (account)(offer)(price)(offerid)) // ???
+        //EOSLIB_SERIALIZE(offer_info, (offerid)(account)(offer)(price)) // ???
     };
 
     /*multi_index<"offer"_n, offer_info,

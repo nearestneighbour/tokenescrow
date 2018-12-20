@@ -1,11 +1,9 @@
-#include "escrow.hpp"
+#include "tokenescrow.hpp"
 #include "assetstr.hpp"
 using namespace eosio;
 using std::string;
 
-void escrow::deloffer(uint64_t offerid) {
-    //2ndary index: auto itr = offers.get_index<"offerid"_n>();
-    // ??
+void tokenescrow::deloffer(uint64_t offerid) {
     eosio_assert(get_code() == get_self(), "Wrong contract");
     // Check if offer exists
     auto it = offers.find(offerid);
@@ -24,7 +22,7 @@ void escrow::deloffer(uint64_t offerid) {
     offers.erase(it);
 }
 
-void escrow::newoffer(uint64_t oid, name acc, extended_asset off, extended_asset pr) {
+void tokenescrow::newoffer(uint64_t oid, name acc, extended_asset off, extended_asset pr) {
     // You can only add an offer for yourself (already asserted in transfer())
     //require_auth(account);
     // Check if offer exists yet
@@ -40,7 +38,7 @@ void escrow::newoffer(uint64_t oid, name acc, extended_asset off, extended_asset
     });
 }
 
-void escrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
+void tokenescrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
     // Check if offer exists
     auto it = offers.find(offerid);
     eosio_assert(it != offers.end(), "Offer not found");
@@ -77,7 +75,7 @@ void escrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
     offers.erase(it);
 }
 
-void escrow::transfer(name from, name to, asset quantity, string memo) {
+void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
     // Check whether function was not directly called via push action, but indirect from another funds transfer
     // todo: test whether this is actually necessary
     eosio_assert(get_code() != get_self(), "Use any other token contract to transfer funds");
@@ -116,7 +114,7 @@ void escrow::transfer(name from, name to, asset quantity, string memo) {
 extern "C" {
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         switch (action) {
-            EOSIO_DISPATCH_HELPER(escrow, (deloffer)(transfer))
+            EOSIO_DISPATCH_HELPER(tokenescrow, (deloffer)(transfer))
         }
     }
 }
