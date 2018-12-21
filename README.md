@@ -39,8 +39,12 @@ cleos set account permission escrowcontra active \
         "permission": {"actor":"escrowcontra", "permission":"eosio.code"}, \
         "weight": 1 \
     }] \
+<<<<<<< HEAD
 }' \
 owner
+=======
+}' owner
+>>>>>>> 25c274b27b1d7008729cef70ff521d6d823bd99e
 ```
 Where PUBKEY is replaced by the public key for the active permission of the contract account.
 
