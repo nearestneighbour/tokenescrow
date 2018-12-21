@@ -52,5 +52,3 @@ Where PUBKEY is replaced by the public key for the active permission of the cont
 * Security testing. So far nothing has been done on this segment.
 
 * Add brief readme section on compiling the contract code using eosio-cpp.
-
-* Fix ABI generation which currently doesn't work.

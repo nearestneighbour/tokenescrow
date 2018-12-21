@@ -134,7 +134,7 @@ void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
 extern "C" {
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         switch (action) {
-            EOSIO_DISPATCH_HELPER(tokenescrow, (deloffer)(transfer))
+            EOSIO_DISPATCH_HELPER(tokenescrow, (deloffer))
         }
     }
 }
