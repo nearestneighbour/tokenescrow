@@ -1,6 +1,6 @@
 Simple smart contract that acts as an escrow account for trading EOS-based tokens.
 
-## Example commands
+## Example usage
 Offering 1 EOS for 1 IQ (token issued by everipediaiq account):
 ```
 cleos transfer client1 escrowcontra "1 EOS" "newoffer,1.000 IQ,everipediaiq,1234"
@@ -52,3 +52,5 @@ Where PUBKEY is replaced by the public key for the active permission of the cont
 * Security testing. So far nothing has been done on this segment.
 
 * Add brief readme section on compiling the contract code using eosio-cpp.
+
+* Fix ABI generation which currently doesn't work.
