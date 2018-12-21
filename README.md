@@ -24,10 +24,31 @@ To view any existing orders, use the following cleos command:
 cleos get table escrowcontra escrowcontra offers
 ```
 
+## Uploading the contract
+Use the following Cleos commands to upload the contract to an account named 'escrowcontra':
+```
+cleos set contract excrowcontra contracts/tokenescrow
+```
+This assumes the contract files (WASM and ABI) are in the directory contracts/tokenescrow. Next, add the eosio.code permission to your contract account. This is necessary to allow the contract to spend tokens from the account it is uploaded to.
+```
+cleos set account permission escrowcontra active \
+'{ \
+    "threshold": 1, \
+    "keys": [{"key": "PUBKEY", "weight" :1}], \
+    "accounts": [{ \
+        "permission": {"actor":"escrowcontra", "permission":"eosio.code"}, \
+        "weight": 1 \
+    }] \
+}' \
+owner
+```
+Where PUBKEY is replaced by the public key for the active permission of the contract account.
+
 ## To do
-
-* newoffer() currently only works if the asset precision is correctly specified in the command, e.g. "1.0000 EOS" works but "1 EOS" doesn't. This can be fixed by querying the asset precision from the currency contract (e.g. eosio.token), or maybe via another, more efficient way?
-
-* Security testing
+* newoffer() currently only works if the asset precision is correctly specified in the command, e.g. "1.0000 EOS" works but "1 EOS" doesn't. This can be fixed by retrieving the asset precision from the currency contract, however this takes time and bandwidth. Maybe it's possible via another, more efficient way?
 
 * Resources - who pays for RAM, and how to get the user to pay for it? How much RAM/NET/CPU does it consume?
+
+* Security testing. So far nothing has been done on this segment.
+
+* Add brief readme section on compiling the contract code using eosio-cpp.
