@@ -49,6 +49,8 @@ Where PUBKEY is replaced by the public key for the active permission of the cont
 
 * Resources - who pays for RAM, and how to get the user to pay for it? How much RAM/NET/CPU does it consume?
 
-* Security testing. So far nothing has been done on this segment.
+* Security testing. So far nothing has been done on this segment. What about timing - when simultaneously sending transactions to remove and to accept an offer, is there a risk of double payout?
 
 * Add brief readme section on compiling the contract code using eosio-cpp.
+
+* RAM table scope - currently all entries are stored in the same scope (that of the contract account), should each offer be stored under the scope of the offer-creator? But how to find offers by Offer ID without knowing the scope?

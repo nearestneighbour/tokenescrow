@@ -113,7 +113,7 @@ void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
         uint64_t offerid = strtoull(memo.substr(index1+1).c_str(), nullptr, 10);
         takeoffer(from, offerid, quantity);
     } else if (func == "newoffer") {
-        // Parameters for newoffer are: price ("1.05 EOS"), price contract, offerid
+        // Parameters for newoffer are: price ("1.0000 EOS"), price contract, offerid
         size_t index2 = memo.find(',', index1+1);
         size_t index3 = memo.find(',', index2+1);
         asset price = asset_from_string(memo.substr(index1+1, index2-index1-1));
@@ -134,7 +134,7 @@ void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
 extern "C" {
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         switch (action) {
-            EOSIO_DISPATCH_HELPER(tokenescrow, (deloffer))
+            EOSIO_DISPATCH_HELPER(tokenescrow, (transfer)(deloffer))
         }
     }
 }
