@@ -131,6 +131,9 @@ void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
     }
 }
 
+// Define the contract apply handler. transfer and deloffer are declared in the
+// contract ABI and can be called directly; newoffer and takeoffer are can only be
+// called indirectly by using transfer.
 extern "C" {
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         switch (action) {
