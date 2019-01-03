@@ -5,7 +5,7 @@ using std::string;
 
 // Return funds to offer-creator and remove offer from the RAM table
 void tokenescrow::deloffer(uint64_t offerid) {
-    // Not sure if this assertion every yields true, but just to be sure
+    // Not sure if this assertion ever yields true, but just to be sure
     eosio_assert(get_code() == get_self(), "Wrong contract");
 
     // Check if offer exists in RAM table
@@ -40,7 +40,8 @@ void tokenescrow::newoffer(uint64_t oid, name acc, extended_asset off, extended_
     // TO DO: check if asset symbol matches with contract
 
     // Add offer to RAM table
-    offers.emplace(get_self(), [&](auto& offr) { // who pays for RAM?
+    //offers.emplace(get_self(), [&](auto& offr) { // contract pays for RAM
+    offers.emplace(acc, [&](auto& offr) { // seller pays for RAM
         offr.offerid = oid;
         offr.account = acc;
         offr.offer = off;
