@@ -1,7 +1,7 @@
 Simple smart contract that acts as an escrow account for trustless trading of EOS-based tokens. I made it for educational purposes, not with real world usage in mind. No security testing has been done, so use caution when deploying this contract on a real EOS network.
 
 ## Example usage
-For this example, assume the contract has been uploaded to an account named escrowcontra. Selling 1 EOS for 5 IQ tokens (issued by everipediaiq account) goes as follows:
+For this example, assume the contract has been uploaded to an account named escrowcontra. Sell 1 EOS for 5 IQ tokens (issued by everipediaiq account) with the following command:
 ```
 cleos transfer client1 escrowcontra "1 EOS" "newoffer,5.000 IQ,everipediaiq,1234"
 ```
