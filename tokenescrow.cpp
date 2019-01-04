@@ -15,8 +15,8 @@ void tokenescrow::neworder(uint64_t oid, name acc, extended_asset offer, extende
     // TO DO: check if asset symbol matches with contract
 
     // Add order to RAM table
-    //orders.emplace(get_self(), [&](auto& ord) { // contract pays for RAM
-    orders.emplace(acc, [&](auto& ord) { // seller pays for RAM
+    //orders.emplace(acc, [&](auto& ord) { // seller pays for RAM - results in error
+    orders.emplace(get_self(), [&](auto& ord) { // contract pays for RAM
         ord.orderid = oid;
         ord.seller = acc;
         ord.offer = offer;
