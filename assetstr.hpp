@@ -7,6 +7,7 @@ using std::string;
 // https://github.com/EOSIO/eos/blob/master/libraries/chain/asset.cpp
 // https://github.com/EOSIO/eos/blob/master/libraries/chain/include/eosio/chain/symbol.hpp
 
+// Convert std::string to eosio::symbol
 symbol symbol_from_string(const string& s, uint8_t precision) {
     eosio_assert(!s.empty(), "symbol is empty string");
     const char* str = s.c_str();
@@ -20,6 +21,7 @@ symbol symbol_from_string(const string& s, uint8_t precision) {
     return symbol(result);
 }
 
+// Convert std::string to eosio::asset
 asset asset_from_string(const string& s) {
     size_t space_pos = s.find(' ');
     eosio_assert((space_pos != string::npos), "Missing space");
