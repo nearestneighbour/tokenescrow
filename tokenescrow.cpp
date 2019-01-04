@@ -3,60 +3,35 @@
 using namespace eosio;
 using std::string;
 
-// Return funds to offer-creator and remove offer from the RAM table
-void tokenescrow::deloffer(uint64_t offerid) {
-    // Not sure if this assertion ever yields true, but just to be sure
-    eosio_assert(get_code() == get_self(), "Wrong contract");
-
-    // Check if offer exists in RAM table
-    auto it = offers.find(offerid);
-    eosio_assert(it != offers.end(), "Offer not found");
-
-    // You can only delete your own offers, so require authentication from offer-creator
-    require_auth(it->account);
-
-    // Return funds to offer-creator
-    string memo = "Refunding of deleted offer " + std::to_string(offerid);
-    action(
-        permission_level(get_self(), "active"_n),
-        it->offer.contract,
-        "transfer"_n,
-        tx{get_self(), it->account, it->offer.quantity, memo.c_str()}
-    ).send();
-
-    // Remove offer from RAM table
-    offers.erase(it);
-}
-
-// Create new offer and add to RAM table
-void tokenescrow::newoffer(uint64_t oid, name acc, extended_asset off, extended_asset pr) {
-    // You can only add an offer for yourself (already managed in transfer function)
+// Create new order and add to RAM table
+void tokenescrow::neworder(uint64_t oid, name acc, extended_asset offer, extended_asset pr) {
+    // You can only add an order for yourself (already managed in transfer function)
     //require_auth(account);
 
-    // Check if offer already exists
-    auto it = offers.find(oid);
-    eosio_assert(it == offers.end(), "Offer ID already taken");
+    // Check if order ID already exists
+    auto it = orders.find(oid);
+    eosio_assert(it == orders.end(), "Order ID already taken");
 
     // TO DO: check if asset symbol matches with contract
 
-    // Add offer to RAM table
-    //offers.emplace(get_self(), [&](auto& offr) { // contract pays for RAM
-    offers.emplace(acc, [&](auto& offr) { // seller pays for RAM
-        offr.offerid = oid;
-        offr.account = acc;
-        offr.offer = off;
-        offr.price = pr;
+    // Add order to RAM table
+    //orders.emplace(get_self(), [&](auto& ord) { // contract pays for RAM
+    orders.emplace(acc, [&](auto& ord) { // seller pays for RAM
+        ord.orderid = oid;
+        ord.seller = acc;
+        ord.offer = offer;
+        ord.price = pr;
     });
 }
 
-// Accept an existing offer
-void tokenescrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
-    // Check if offer exists in RAM table
-    auto it = offers.find(offerid);
-    eosio_assert(it != offers.end(), "Offer not found");
+// Fill an existing order
+void tokenescrow::fillorder(name buyer, uint64_t orderid, asset quantity) {
+    // Check if order exists in RAM table
+    auto it = orders.find(orderid);
+    eosio_assert(it != orders.end(), "Order not found");
 
-    // Perform a number of assertions to check whether the submitted asset matches
-    // with the asset specified in the offer. Compare asset symbol, contract and amount.
+    // Perform a number of checks to check whether the submitted asset matches
+    // with the asset specified in the order. Compare asset symbol, contract and amount.
     string msg = "Wrong symbol, try " + it->price.quantity.to_string();
     msg += " instead of " + quantity.to_string();
     eosio_assert(
@@ -70,16 +45,16 @@ void tokenescrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
     msg += " instead of " + quantity.to_string();
     eosio_assert(quantity == it->price.quantity, msg.c_str());
 
-    string memo = "Payout offer ID " + std::to_string(offerid);
-    // Forward submitted asset to offer-creator
+    string memo = "Payout from order " + std::to_string(orderid);
+    // Forward price asset to seller
     action(
         permission_level(get_self(), "active"_n),
         it->price.contract,
         "transfer"_n,
-        tx{get_self(), it->account, it->price.quantity, memo.c_str()}
+        tx{get_self(), it->seller, it->price.quantity, memo.c_str()}
     ).send();
 
-    // Send offer asset to offer-taker for payout
+    // Send offer asset to buyer for payout
     action(
         permission_level(get_self(), "active"_n),
         it->offer.contract,
@@ -87,14 +62,39 @@ void tokenescrow::takeoffer(name buyer, uint64_t offerid, asset quantity) {
         tx{get_self(), buyer, it->offer.quantity, memo.c_str()}
     ).send();
 
-    // Remove offer from RAM table
-    offers.erase(it);
+    // Remove order from RAM table
+    orders.erase(it);
+}
+
+// Return funds to seller and remove order from the RAM table
+void tokenescrow::delorder(uint64_t orderid) {
+    // Not sure if this assertion ever yields true, but just to be sure
+    eosio_assert(get_code() == get_self(), "Wrong contract");
+
+    // Check if order exists in RAM table
+    auto it = orders.find(orderid);
+    eosio_assert(it != orders.end(), "Order not found");
+
+    // You can only delete your own orders, so require authentication from seller
+    require_auth(it->seller);
+
+    // Return funds to seller
+    string memo = "Refunding of deleted order " + std::to_string(orderid);
+    action(
+        permission_level(get_self(), "active"_n),
+        it->offer.contract,
+        "transfer"_n,
+        tx{get_self(), it->seller, it->offer.quantity, memo.c_str()}
+    ).send();
+
+    // Remove order from RAM table
+    orders.erase(it);
 }
 
 // This function is called whenever the contract account is included in a transaction.
 // This can happen when the account acts as a sender or recipient of the transaction.
 // When transferring funds to the account, the memo is used to specify the goal
-// of the transaction - either to create, or accept an offer.
+// of the transaction - either to create, or fill an order.
 void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
     // Only act on incoming transactions, ignore outgoing
     if (to != get_self()) {
@@ -107,21 +107,21 @@ void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
     // Parse transaction memo to get action parameters - args are separated with comma
     // TO DO: check for errors in memo (more extensively than now)
     size_t index1 = memo.find(',');
-    // Func is either 'newoffer' or 'takeoffer'
+    // Func is either 'neworder' or 'fillorder'
     string func = memo.substr(0,index1);
-    if (func == "takeoffer") {
-        // Only arg for takeoffer is offerid
-        uint64_t offerid = strtoull(memo.substr(index1+1).c_str(), nullptr, 10);
-        takeoffer(from, offerid, quantity);
-    } else if (func == "newoffer") {
-        // Parameters for newoffer are: price ("1.0000 EOS"), price contract, offerid
+    if (func == "fillorder") {
+        // Only arg for fillorder is orderid
+        uint64_t orderid = strtoull(memo.substr(index1+1).c_str(), nullptr, 10);
+        fillorder(from, orderid, quantity);
+    } else if (func == "neworder") {
+        // Parameters for neworder are: price ("1.0000 EOS"), price contract, orderid
         size_t index2 = memo.find(',', index1+1);
         size_t index3 = memo.find(',', index2+1);
         asset price = asset_from_string(memo.substr(index1+1, index2-index1-1));
         name pricecode = name(memo.substr(index2+1, index3-index2-1));
-        uint64_t offerid = strtoull(memo.substr(index3+1).c_str(), nullptr, 10);
-        newoffer(
-            offerid,
+        uint64_t orderid = strtoull(memo.substr(index3+1).c_str(), nullptr, 10);
+        neworder(
+            orderid,
             from,
             extended_asset(quantity, get_code()),
             extended_asset(price, pricecode)
@@ -132,13 +132,13 @@ void tokenescrow::transfer(name from, name to, asset quantity, string memo) {
     }
 }
 
-// Define the contract apply handler. transfer and deloffer are declared in the
-// contract ABI and can be called directly; newoffer and takeoffer are can only be
+// Define the contract apply handler. transfer and delorder are declared in the
+// contract ABI and can be called directly; neworder and fillorder are can only be
 // called indirectly by using transfer.
 extern "C" {
     void apply(uint64_t receiver, uint64_t code, uint64_t action) {
         switch (action) {
-            EOSIO_DISPATCH_HELPER(tokenescrow, (transfer)(deloffer))
+            EOSIO_DISPATCH_HELPER(tokenescrow, (transfer)(delorder))
         }
     }
 }
