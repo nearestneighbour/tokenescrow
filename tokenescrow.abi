@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Jan  4 19:42:38 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Jan  4 20:06:42 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -40,7 +40,7 @@
         {
             "name": "delorder",
             "type": "delorder",
-            "ricardian_contract": "This is an example of a Ricardian contract for the delorder function of the contract"
+            "ricardian_contract": "This is an example of a Ricardian contract for the delorder function"
         }
     ],
     "tables": [
