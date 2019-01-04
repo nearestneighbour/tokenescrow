@@ -1,27 +1,27 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Dec 24 16:31:16 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Jan  4 19:42:38 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
-            "name": "deloffer",
+            "name": "delorder",
             "base": "",
             "fields": [
                 {
-                    "name": "offerid",
+                    "name": "orderid",
                     "type": "uint64"
                 }
             ]
         },
         {
-            "name": "offer_info",
+            "name": "order_info",
             "base": "",
             "fields": [
                 {
-                    "name": "offerid",
+                    "name": "orderid",
                     "type": "uint64"
                 },
                 {
-                    "name": "account",
+                    "name": "seller",
                     "type": "name"
                 },
                 {
@@ -38,21 +38,26 @@
     "types": [],
     "actions": [
         {
-            "name": "deloffer",
-            "type": "deloffer",
-            "ricardian_contract": ""
+            "name": "delorder",
+            "type": "delorder",
+            "ricardian_contract": "This is an example of a Ricardian contract for the delorder function of the contract"
         }
     ],
     "tables": [
         {
-            "name": "offers",
-            "type": "offer_info",
+            "name": "orders",
+            "type": "order_info",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
         }
     ],
-    "ricardian_clauses": [],
+    "ricardian_clauses": [
+        {
+            "id": "Ricardian clause",
+            "body": "This is an example of a Ricardian clause that is included in the contract."
+        }
+    ],
     "variants": [],
     "abi_extensions": []
 }
