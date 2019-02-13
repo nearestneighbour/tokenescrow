@@ -46,10 +46,10 @@ owner
 Where PUBKEY is replaced by the public key for the active permission of the contract account.
 
 ## To do
-* neworder() currently only works if the asset precision is correctly specified in the command, e.g. "1.0000 EOS" works but "1 EOS" doesn't. This can be fixed by retrieving the asset precision from the currency contract, however this takes time and bandwidth. Maybe it's possible via another, more efficient way?
+* `neworder()` currently only works if the asset precision is correctly specified in the command, e.g. "1.0000 EOS" works but "1 EOS" doesn't. This can be fixed by retrieving the asset precision from the currency contract, however this takes time and bandwidth. Maybe it's possible via another, more efficient way?
 * Add Ricardian clauses to contract
 * Resources - how to get the user to pay for RAM?
 * Security testing. So far nothing has been done on this segment. What about timing - when simultaneously sending transactions to remove and to accept an order, is there a risk of double payout?
-* Add brief README section on compiling the contract code using eosio-cpp. (eosio-cpp -abigen -o tokenescrow.wasm tokenescrow.cpp)
+* Add brief README section on compiling the contract code using eosio-cpp. (`eosio-cpp -abigen -o tokenescrow.wasm tokenescrow.cpp`)
 * RAM table scope - currently all entries are stored in the same scope (that of the contract account), should each order be stored under the scope of the seller? But how to find orders by order ID without knowing the scope?
 * Allow partial filling of orders?
